@@ -1,0 +1,42 @@
+{
+    "chapter_description": "Ionic, covalent, metallic bonds, hybridization, VSEPR theory, molecular orbital theory",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "The hybridization of carbon in CH₄ is:",
+            "explanation": "4 sigma bonds, 0 lone pairs → sp³ hybridization",
+            "options": [
+                { "label": "A", "text": "sp³", "correct": true },
+                { "label": "B", "text": "sp²" },
+                { "label": "C", "text": "sp" },
+                { "label": "D", "text": "sp³d" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "In BF₃, what is the F-B-F bond angle (in degrees)?",
+            "explanation": "BF₃ has sp² hybridization with trigonal planar geometry → 120°",
+            "answer": 120,
+            "tolerance": 0
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "According to molecular orbital theory, which of the following is paramagnetic?",
+            "explanation": "O₂ has two unpaired electrons in π* antibonding orbitals, making it paramagnetic.",
+            "options": [
+                { "label": "A", "text": "O₂", "correct": true },
+                { "label": "B", "text": "N₂" },
+                { "label": "C", "text": "F₂" },
+                { "label": "D", "text": "Ne₂" }
+            ]
+        }
+    ]
+}

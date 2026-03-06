@@ -1,0 +1,51 @@
+{
+    "chapter_description": "Straight lines, circles, conic sections (parabola, ellipse, hyperbola)",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "Distance between points (3,4) and (0,0) is:",
+            "explanation": "d = √(3² + 4²) = √(9 + 16) = √25 = 5",
+            "options": [
+                { "label": "A", "text": "5", "correct": true },
+                { "label": "B", "text": "7" },
+                { "label": "C", "text": "25" },
+                { "label": "D", "text": "√7" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "The slope of a line passing through (0,0) and (2,4) is:",
+            "explanation": "m = (y₂−y₁)/(x₂−x₁) = (4−0)/(2−0) = 2",
+            "options": [
+                { "label": "A", "text": "2", "correct": true },
+                { "label": "B", "text": "4" },
+                { "label": "C", "text": "0.5" },
+                { "label": "D", "text": "1" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "Find the distance between the points (1, 2) and (4, 6). Round to 2 decimal places.",
+            "explanation": "d = √((4−1)² + (6−2)²) = √(9 + 16) = √25 = 5",
+            "answer": 5,
+            "tolerance": 0.01
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "hard",
+            "text": "Find the area of the triangle with vertices (0,0), (4,0), and (0,3).",
+            "explanation": "Area = ½ × base × height = ½ × 4 × 3 = 6",
+            "answer": 6,
+            "tolerance": 0
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "chapter_description": "Definite and indefinite integrals, methods of integration, area under curves",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "∫(0 to π) sin(x) dx = ?",
+            "explanation": "[−cos(x)] from 0 to π = −cos(π) + cos(0) = 1 + 1 = 2",
+            "options": [
+                { "label": "A", "text": "2", "correct": true },
+                { "label": "B", "text": "0" },
+                { "label": "C", "text": "1" },
+                { "label": "D", "text": "π" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "∫ 2x dx = ?",
+            "explanation": "Power rule: ∫2x dx = x² + C",
+            "options": [
+                { "label": "A", "text": "x² + C", "correct": true },
+                { "label": "B", "text": "2x² + C" },
+                { "label": "C", "text": "x + C" },
+                { "label": "D", "text": "2 + C" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "∫ 1/(1+x²) dx = ?",
+            "explanation": "Standard integral: arctan(x) + C",
+            "options": [
+                { "label": "A", "text": "arctan(x) + C", "correct": true },
+                { "label": "B", "text": "ln(1+x²) + C" },
+                { "label": "C", "text": "1/x + C" },
+                { "label": "D", "text": "sin⁻¹(x) + C" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "Evaluate: ∫₀¹ (3x² + 2x) dx. Enter the exact value.",
+            "explanation": "[x³ + x²] from 0 to 1 = (1 + 1) − 0 = 2",
+            "answer": 2,
+            "tolerance": 0
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "hard",
+            "text": "Evaluate: ∫₀^(π/2) sin²(x) dx. Express answer as a decimal rounded to 4 places.",
+            "explanation": "∫sin²x dx = x/2 − sin(2x)/4. From 0 to π/2 = π/4 ≈ 0.7854",
+            "answer": 0.7854,
+            "tolerance": 0.001
+        }
+    ]
+}

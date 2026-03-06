@@ -1,0 +1,30 @@
+{
+  "1.1 Kinematics": {
+    "pdf": "1.pdf",
+    "total": 58,
+    "questions_saved": 58,
+    "answers_saved": 58,
+    "range": "Q1-Q58",
+    "split_methods": {
+      "ans_marker": 47,
+      "bold_transition": 6,
+      "last_bold": 5,
+      "fallback": 0,
+      "failed": 0
+    }
+  },
+  "1.2 The Fundamental Equation of Dynamics": {
+    "pdf": "2.pdf",
+    "total": 59,
+    "questions_saved": 59,
+    "answers_saved": 59,
+    "range": "Q59-Q117",
+    "split_methods": {
+      "ans_marker": 56,
+      "bold_transition": 2,
+      "last_bold": 1,
+      "fallback": 0,
+      "failed": 0
+    }
+  }
+}

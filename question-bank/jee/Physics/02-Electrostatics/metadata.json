@@ -1,0 +1,64 @@
+{
+    "chapter_description": "Coulomb's law, electric field, potential, capacitors, Gauss's law",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "Two point charges of +3μC and −3μC are placed 20 cm apart. What is the electric field at the midpoint?",
+            "explanation": "E = kq/r² for each charge. At midpoint both fields point same direction, so add them. E = 2 × 9×10⁹ × 3×10⁻⁶ / (0.1)² = 5.4×10⁶ N/C",
+            "options": [
+                { "label": "A", "text": "5.4 × 10⁶ N/C", "correct": true },
+                { "label": "B", "text": "2.7 × 10⁶ N/C" },
+                { "label": "C", "text": "0 N/C" },
+                { "label": "D", "text": "1.08 × 10⁷ N/C" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "Coulomb's law is analogous to which law in gravitation?",
+            "explanation": "Both follow inverse square law: F ∝ 1/r²",
+            "options": [
+                { "label": "A", "text": "Newton's law of gravitation", "correct": true },
+                { "label": "B", "text": "Kepler's law" },
+                { "label": "C", "text": "Gauss's law" },
+                { "label": "D", "text": "Ampere's law" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "A charge Q is distributed uniformly over a ring of radius R. What is the electric field at a distance x from the center along the axis?",
+            "explanation": "E = kQx / (R² + x²)^(3/2)",
+            "options": [
+                { "label": "A", "text": "kQx / (R² + x²)^(3/2)", "correct": true },
+                { "label": "B", "text": "kQ / x²" },
+                { "label": "C", "text": "kQ / (R² + x²)" },
+                { "label": "D", "text": "0" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "Two charges of +4μC and −4μC are separated by 10 cm. Calculate the electric dipole moment (in C·m × 10⁻⁷).",
+            "explanation": "p = q × d = 4×10⁻⁶ × 0.1 = 4×10⁻⁷ C·m → Answer = 4",
+            "answer": 4,
+            "tolerance": 0.01
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "hard",
+            "text": "A parallel plate capacitor has plates of area 100 cm² separated by 2 mm. If the dielectric constant is 5, find the capacitance in pF (picofarads). Round to 1 decimal.",
+            "explanation": "C = κε₀A/d = 5 × 8.854×10⁻¹² × 100×10⁻⁴ / 2×10⁻³ = 221.3 pF",
+            "answer": 221.3,
+            "tolerance": 0.5
+        }
+    ]
+}

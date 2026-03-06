@@ -1,0 +1,29 @@
+{
+    "chapter_description": "Laws of thermodynamics, entropy, heat engines, Carnot cycle",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "In an adiabatic process, which quantity remains zero?",
+            "explanation": "Adiabatic means no heat exchange: Q = 0",
+            "options": [
+                { "label": "A", "text": "Heat exchange (Q = 0)", "correct": true },
+                { "label": "B", "text": "Work done" },
+                { "label": "C", "text": "Change in internal energy" },
+                { "label": "D", "text": "Change in temperature" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "hard",
+            "text": "An ideal gas undergoes isothermal expansion at 300 K, volume doubles. If n = 2 mol, find work done (in Joules). Use R = 8.314. Round to nearest integer.",
+            "explanation": "W = nRT ln(V₂/V₁) = 2 × 8.314 × 300 × ln(2) ≈ 3458 J",
+            "answer": 3458,
+            "tolerance": 5
+        }
+    ]
+}

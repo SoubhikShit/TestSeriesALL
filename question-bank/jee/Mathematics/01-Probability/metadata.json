@@ -1,0 +1,55 @@
+{
+    "chapter_description": "Conditional probability, Bayes' theorem, random variables, distributions",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "If P(A) = 0.5 and P(B) = 0.3 and A, B are independent, then P(A ∩ B) = ?",
+            "explanation": "For independent events: P(A ∩ B) = P(A) × P(B) = 0.5 × 0.3 = 0.15",
+            "options": [
+                { "label": "A", "text": "0.15", "correct": true },
+                { "label": "B", "text": "0.8" },
+                { "label": "C", "text": "0.2" },
+                { "label": "D", "text": "0.35" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "A bag contains 5 red and 3 blue balls. Two balls are drawn without replacement. P(both red) = ?",
+            "explanation": "P = (5/8) × (4/7) = 20/56 = 5/14 ≈ 0.357",
+            "options": [
+                { "label": "A", "text": "5/14", "correct": true },
+                { "label": "B", "text": "5/8" },
+                { "label": "C", "text": "25/64" },
+                { "label": "D", "text": "1/4" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "In Bayes' theorem, if P(A|B) is the posterior probability, then P(B|A) is called:",
+            "explanation": "P(B|A) is the likelihood — how likely the evidence is given the hypothesis.",
+            "options": [
+                { "label": "A", "text": "Likelihood", "correct": true },
+                { "label": "B", "text": "Prior probability" },
+                { "label": "C", "text": "Marginal probability" },
+                { "label": "D", "text": "Joint probability" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "A die is thrown twice. What is the probability of getting a sum of 7? Express as a decimal rounded to 4 places.",
+            "explanation": "Favorable: (1,6)(2,5)(3,4)(4,3)(5,2)(6,1) = 6. Total = 36. P = 6/36 = 0.1667",
+            "answer": 0.1667,
+            "tolerance": 0.001
+        }
+    ]
+}

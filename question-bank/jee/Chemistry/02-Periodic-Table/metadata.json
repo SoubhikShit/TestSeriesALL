@@ -1,0 +1,42 @@
+{
+    "chapter_description": "Periodic trends, blocks, properties, electron configurations",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "Which property generally increases across a period in the periodic table?",
+            "explanation": "Electronegativity increases left to right as nuclear charge increases and atomic radius decreases.",
+            "options": [
+                { "label": "A", "text": "Electronegativity", "correct": true },
+                { "label": "B", "text": "Atomic radius" },
+                { "label": "C", "text": "Metallic character" },
+                { "label": "D", "text": "Electron shielding" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "Which block in the periodic table contains the lanthanides?",
+            "explanation": "Lanthanides (4f series) belong to the f-block.",
+            "options": [
+                { "label": "A", "text": "f-block", "correct": true },
+                { "label": "B", "text": "d-block" },
+                { "label": "C", "text": "p-block" },
+                { "label": "D", "text": "s-block" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "easy",
+            "text": "How many elements are in the 3rd period of the periodic table?",
+            "explanation": "3rd period: Na, Mg, Al, Si, P, S, Cl, Ar → 8 elements",
+            "answer": 8,
+            "tolerance": 0
+        }
+    ]
+}

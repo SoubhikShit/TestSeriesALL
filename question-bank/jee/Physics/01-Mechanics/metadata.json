@@ -1,0 +1,73 @@
+{
+    "chapter_description": "Newton's laws, friction, circular motion, work-energy theorem, conservation of momentum",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "Which of Newton's laws explains why a passenger lurches forward when a bus stops suddenly?",
+            "explanation": "First law of motion — law of inertia: a body continues in its state of rest or uniform motion unless acted upon by an external force.",
+            "options": [
+                { "label": "A", "text": "First law (Law of Inertia)", "correct": true },
+                { "label": "B", "text": "Second law (F = ma)" },
+                { "label": "C", "text": "Third law (Action-Reaction)" },
+                { "label": "D", "text": "Law of Gravitation" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "A block of 5 kg on a frictionless surface is pushed with 20 N force. What is the acceleration?",
+            "explanation": "F = ma → a = F/m = 20/5 = 4 m/s²",
+            "options": [
+                { "label": "A", "text": "4 m/s²", "correct": true },
+                { "label": "B", "text": "2 m/s²" },
+                { "label": "C", "text": "100 m/s²" },
+                { "label": "D", "text": "0.25 m/s²" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "A conical pendulum has string length L and makes angle θ with the vertical. Find the time period.",
+            "explanation": "T = 2π√(L cos θ / g). Resolving forces: T sin θ = mω²r and T cos θ = mg.",
+            "options": [
+                { "label": "A", "text": "2π√(L cos θ / g)", "correct": true },
+                { "label": "B", "text": "2π√(L / g)" },
+                { "label": "C", "text": "2π√(L sin θ / g)" },
+                { "label": "D", "text": "2π√(L / g cos θ)" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "easy",
+            "text": "A 10 kg block is accelerated at 3 m/s². What is the net force (in Newtons) acting on it?",
+            "explanation": "F = ma = 10 × 3 = 30 N",
+            "answer": 30,
+            "tolerance": 0
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "A ball is thrown vertically upward with velocity 20 m/s. Find the maximum height reached (in meters). Take g = 10 m/s².",
+            "explanation": "v² = u² − 2gh → 0 = 400 − 20h → h = 20 m",
+            "answer": 20,
+            "tolerance": 0.1
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "hard",
+            "text": "A 2 kg block slides down a 30° incline with coefficient of kinetic friction μ = 0.2. Find the acceleration (in m/s²). Take g = 10 m/s².",
+            "explanation": "a = g(sin θ − μ cos θ) = 10(0.5 − 0.2 × 0.866) = 10(0.5 − 0.1732) = 3.268 m/s²",
+            "answer": 3.27,
+            "tolerance": 0.05
+        }
+    ]
+}

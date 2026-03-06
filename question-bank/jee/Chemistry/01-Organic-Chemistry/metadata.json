@@ -1,0 +1,64 @@
+{
+    "chapter_description": "Hydrocarbons, functional groups, named reactions, reaction mechanisms",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "Which reagent is used in the Friedel-Crafts alkylation reaction?",
+            "explanation": "Friedel-Crafts alkylation uses an alkyl halide with AlCl₃ (Lewis acid catalyst).",
+            "options": [
+                { "label": "A", "text": "AlCl₃", "correct": true },
+                { "label": "B", "text": "FeCl₃" },
+                { "label": "C", "text": "ZnCl₂" },
+                { "label": "D", "text": "NaOH" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "easy",
+            "text": "What is the IUPAC name of CH₃-CH₂-OH?",
+            "explanation": "2-carbon chain with -OH = Ethanol",
+            "options": [
+                { "label": "A", "text": "Ethanol", "correct": true },
+                { "label": "B", "text": "Methanol" },
+                { "label": "C", "text": "Propanol" },
+                { "label": "D", "text": "Butanol" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "How many sigma bonds are present in ethane (C₂H₆)?",
+            "explanation": "1 C-C sigma + 6 C-H sigma = 7 sigma bonds",
+            "answer": 7,
+            "tolerance": 0
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "hard",
+            "text": "What is the molecular weight of benzene (C₆H₆)? Use C=12, H=1.",
+            "explanation": "MW = 6×12 + 6×1 = 72 + 6 = 78 g/mol",
+            "answer": 78,
+            "tolerance": 0
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "Markovnikov's rule is applicable to the addition of HBr to:",
+            "explanation": "Markovnikov addition applies to unsymmetrical alkenes. H goes to the carbon with more H's, Br to the more substituted carbon.",
+            "options": [
+                { "label": "A", "text": "Propene", "correct": true },
+                { "label": "B", "text": "Ethene" },
+                { "label": "C", "text": "Benzene" },
+                { "label": "D", "text": "Cyclopropane" }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "chapter_description": "Reflection, refraction, lenses, mirrors, wave optics",
+    "default_marks": 4,
+    "default_negative_marks": 1,
+    "questions": [
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "medium",
+            "text": "A convex lens of focal length 20 cm forms a real image at 60 cm from the lens. Where is the object?",
+            "explanation": "1/v − 1/u = 1/f → 1/60 − 1/u = 1/20 → u = −30 cm",
+            "options": [
+                { "label": "A", "text": "30 cm from lens", "correct": true },
+                { "label": "B", "text": "20 cm from lens" },
+                { "label": "C", "text": "40 cm from lens" },
+                { "label": "D", "text": "60 cm from lens" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "mcq",
+            "difficulty": "hard",
+            "text": "In Young's double slit experiment, the fringe width is β. If the wavelength is doubled and slit separation halved, the new fringe width is:",
+            "explanation": "β = λD/d. New β' = (2λ)D/(d/2) = 4λD/d = 4β",
+            "options": [
+                { "label": "A", "text": "4β", "correct": true },
+                { "label": "B", "text": "2β" },
+                { "label": "C", "text": "β" },
+                { "label": "D", "text": "β/2" }
+            ]
+        },
+        {
+            "file": null,
+            "type": "nat",
+            "difficulty": "medium",
+            "text": "A concave mirror has focal length 15 cm. An object is placed 30 cm from the mirror. Find the image distance (in cm).",
+            "explanation": "1/v + 1/u = 1/f → 1/v = 1/15 − 1/30 = 1/30 → v = 30 cm",
+            "answer": 30,
+            "tolerance": 0.1
+        }
+    ]
+}

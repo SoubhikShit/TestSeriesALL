@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IE Irodov — Physics Mock Test (30 Questions)</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --primary: #4f46e5; --primary-dark: #4338ca; --primary-light: #818cf8;
+            --success: #16a34a; --danger: #dc2626; --warning: #f59e0b;
+            --bg: #f8fafc; --surface: #ffffff; --text: #1e293b; --text-light: #64748b;
+            --border: #e2e8f0; --radius: 12px; --shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        header { background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 16px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        header h1 { font-size: 1.25rem; font-weight: 700; }
+        .container { max-width: 950px; margin: 0 auto; padding: 0 20px; }
+        main { padding: 24px 0; min-height: calc(100vh - 64px); }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #15803d; }
+        .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-warning { background: var(--warning); color: white; }
+
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-kinematics { background: #e0e7ff; color: #4338ca; }
+        .badge-dynamics { background: #fef3c7; color: #92400e; }
+
+        /* TEST HEADER */
+        .test-header { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .timer { font-size: 1.4rem; font-weight: 700; color: var(--danger); font-variant-numeric: tabular-nums; }
+        .timer.warning { animation: pulse 1s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* QUESTION NAV */
+        .question-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+        .question-nav button { width: 38px; height: 38px; border-radius: 8px; border: 2px solid var(--border); background: white; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.2s; }
+        .question-nav button.answered { background: var(--primary); color: white; border-color: var(--primary); }
+        .question-nav button.active { border-color: var(--primary-dark); box-shadow: 0 0 0 3px rgba(79,70,229,0.3); }
+        .question-nav button.review { background: var(--warning); color: white; border-color: var(--warning); }
+
+        /* NAV LEGEND */
+        .nav-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; font-size: 0.78rem; color: var(--text-light); }
+        .nav-legend span { display: flex; align-items: center; gap: 5px; }
+        .nav-legend .lb { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--border); }
+        .nav-legend .lb-ans { background: var(--primary); border-color: var(--primary); }
+        .nav-legend .lb-rev { background: var(--warning); border-color: var(--warning); }
+        .nav-legend .lb-cur { border-color: var(--primary-dark); box-shadow: 0 0 0 2px rgba(79,70,229,0.3); }
+
+        /* QUESTION IMAGE */
+        .question-image { max-width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 12px 0; display: block; }
+        .answer-image { max-width: 100%; border-radius: 10px; border: 2px solid #86efac; margin: 10px 0; display: block; }
+
+        /* ANSWER INPUT */
+        .answer-input-group { margin: 16px 0; }
+        .answer-input-group label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px; }
+        .answer-input { width: 100%; max-width: 400px; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; transition: border-color 0.2s; }
+        .answer-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+        .answer-input.has-value { border-color: var(--primary); background: #eef2ff; }
+
+        /* STAT GRID */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg); padding: 16px; border-radius: 10px; text-align: center; }
+        .stat-card .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        .stat-card .stat-label { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+
+        /* RESULT STATUSES */
+        .status-label { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
+        .status-attempted { background: #dcfce7; color: var(--success); }
+        .status-unattempted { background: #fff7ed; color: #c2410c; }
+        .status-review { background: #fef3c7; color: #92400e; }
+
+        /* RESULT ANSWER AREA */
+        .your-answer-box { padding: 10px 14px; border-radius: 8px; margin: 8px 0; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .your-answer-box.attempted { background: #eef2ff; border: 2px solid var(--primary); }
+        .your-answer-box.unattempted { background: #fff7ed; border: 2px solid #fed7aa; }
+
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .text-light { color: var(--text-light); }
+        .mt-1 { margin-top: 8px; }
+        .mt-2 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 16px; }
+        .mb-3 { margin-bottom: 24px; }
+        .hidden { display: none !important; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 500; }
+        .modal { background: white; border-radius: 16px; max-width: 550px; width: 95%; max-height: 85vh; overflow-y: auto; padding: 28px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+        .modal h2 { margin-bottom: 16px; text-align: center; }
+        .summary-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .summary-stat { text-align: center; padding: 12px 8px; border-radius: 10px; }
+        .summary-stat .ss-value { font-size: 1.5rem; font-weight: 800; }
+        .summary-stat .ss-label { font-size: 0.75rem; color: var(--text-light); }
+        .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+
+        @media (max-width: 640px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            header h1 { font-size: 1rem; }
+            .test-header { flex-direction: column; text-align: center; }
+            .question-nav button { width: 34px; height: 34px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📖 IE Irodov — Physics Mock Test</h1>
+            <a href="index.html" style="color:rgba(255,255,255,0.8); font-size:0.85rem; text-decoration:none;">← Back to Platform</a>
+        </div>
+    </header>
+    <main class="container">
+        <div id="app"></div>
+    </main>
+
+<script>
+// ═══════════════════════════════════════
+// QUESTION BANK — Pull from irodov_qa_separated folder
+// ═══════════════════════════════════════
+const chapters = [
+    {
+        name: "1.1 Kinematics",
+        badge: "kinematics",
+        folder: "1.1 Kinematics",
+        range: [1, 58] // Q1 to Q58
+    },
+    {
+        name: "1.2 Fundamental Equation of Dynamics",
+        badge: "dynamics",
+        folder: "1.2 The Fundamental Equation of Dynamics",
+        range: [59, 117] // Q59 to Q117
+    }
+];
+
+const BASE_PATH = "/irodov_qa_separated";
+
+// Build full question pool
+function buildQuestionPool() {
+    const pool = [];
+    for (const ch of chapters) {
+        for (let q = ch.range[0]; q <= ch.range[1]; q++) {
+            pool.push({
+                id: q,
+                chapter: ch.name,
+                badge: ch.badge,
+                questionImg: `${BASE_PATH}/${encodeURIComponent(ch.folder)}/Questions/Q${q}.png`,
+                answerImg: `${BASE_PATH}/${encodeURIComponent(ch.folder)}/Answers/A${q}.png`
+            });
+        }
+    }
+    return pool;
+}
+
+// Fisher-Yates shuffle
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+// Select 30 questions: 15 from each chapter
+function selectQuestions() {
+    const pool = buildQuestionPool();
+    const ch1 = pool.filter(q => q.badge === 'kinematics');
+    const ch2 = pool.filter(q => q.badge === 'dynamics');
+    const selected = [
+        ...shuffle(ch1).slice(0, 15),
+        ...shuffle(ch2).slice(0, 15)
+    ];
+    return shuffle(selected); // final shuffle to mix chapters
+}
+
+// ═══════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════
+let testQuestions = [];
+let currentQuestion = 0;
+let answers = {};           // questionId → user's text answer
+let markedForReview = {};   // questionId → boolean
+let testSubmitted = false;
+let timerInterval = null;
+let timeLeft = 90 * 60;    // 90 minutes for 30 Irodov problems
+
+// ═══════════════════════════════════════
+// RENDER: INSTRUCTIONS
+// ═══════════════════════════════════════
+function renderInstructions() {
+    const app = document.getElementById('app');
+    app.innerHTML = `
+        <div style="max-width: 680px; margin: 0 auto;">
+            <div class="card">
+                <h2 style="text-align:center; margin-bottom: 16px;">📋 Test Instructions</h2>
+                <h3 style="text-align:center; color: var(--primary); margin-bottom: 20px;">IE Irodov — Physics Problems</h3>
+
+                <div class="stat-grid mb-3">
+                    <div class="stat-card">
+                        <div class="stat-value">30</div>
+                        <div class="stat-label">Questions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">90 min</div>
+                        <div class="stat-label">Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">Numerical</div>
+                        <div class="stat-label">Answer Type</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Chapters</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">Chapters Covered:</h4>
+                    <ul style="margin-left: 20px; color: var(--text-light); font-size: 0.9rem;">
+                        <li><strong>1.1 Kinematics</strong> — 15 questions (from Q1–Q58 pool)</li>
+                        <li><strong>1.2 Fundamental Equation of Dynamics</strong> — 15 questions (from Q59–Q117 pool)</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 8px; color: #1d4ed8;">📝 How it works:</h4>
+                    <ol style="margin-left: 20px; color: var(--text-light); font-size: 0.9rem; line-height: 1.8;">
+                        <li>Each question is shown as an <strong>image</strong> from IE Irodov.</li>
+                        <li>Type your <strong>numerical answer</strong> in the input field.</li>
+                        <li>You can <strong>mark questions for review</strong> and come back later.</li>
+                        <li>After submission, the <strong>answer/solution image</strong> is shown for every question.</li>
+                        <li>Questions you <strong>didn't attempt</strong> will be marked in orange.</li>
+                        <li>30 random questions are selected each time — <strong>retake for a fresh set!</strong></li>
+                    </ol>
+                </div>
+
+                <ul style="list-style: none;">
+                    <li style="padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; display: flex; gap: 10px;">
+                        <span style="background: var(--primary); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0;">1</span>
+                        Timer starts at <strong>90 minutes</strong>. Auto-submit on timeout.
+                    </li>
+                    <li style="padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; display: flex; gap: 10px;">
+                        <span style="background: var(--primary); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0;">2</span>
+                        Use the <strong>question palette</strong> to navigate between problems.
+                    </li>
+                    <li style="padding: 8px 0; font-size: 0.92rem; display: flex; gap: 10px;">
+                        <span style="background: var(--primary); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0;">3</span>
+                        After submit, you'll see the <strong>Irodov solution/answer</strong> for each problem.
+                    </li>
+                </ul>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0; padding: 14px; background: #fef3c7; border-radius: 10px; font-size: 0.9rem;">
+                    <input type="checkbox" id="agree-check" style="width: 20px; height: 20px; accent-color: var(--primary);">
+                    <label for="agree-check">I have read the instructions and I'm ready to begin.</label>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" id="start-btn" disabled onclick="startTest()">▶ Start Test (30 Random Questions)</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('agree-check').addEventListener('change', function() {
+        document.getElementById('start-btn').disabled = !this.checked;
+    });
+}
+
+// ═══════════════════════════════════════
+// START TEST
+// ═══════════════════════════════════════
+function startTest() {
+    testQuestions = selectQuestions();
+    currentQuestion = 0;
+    answers = {};
+    markedForReview = {};
+    testSubmitted = false;
+    timeLeft = 90 * 60;
+    renderTest();
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const el = document.getElementById('timer');
+        if (el) {
+            el.textContent = formatTime(timeLeft);
+            if (timeLeft <= 300) el.classList.add('warning');
+        }
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            submitTest(true);
+        }
+    }, 1000);
+}
+
+// ═══════════════════════════════════════
+// RENDER: TEST PAGE
+// ═══════════════════════════════════════
+function renderTest() {
+    const app = document.getElementById('app');
+    const q = testQuestions[currentQuestion];
+    const answeredCount = testQuestions.filter(tq => {
+        const a = answers[tq.id];
+        return a !== undefined && a !== null && a.toString().trim() !== '';
+    }).length;
+    const reviewCount = Object.keys(markedForReview).filter(k => markedForReview[k]).length;
+    const isReviewed = markedForReview[q.id];
+    const currentVal = answers[q.id] || '';
+
+    app.innerHTML = `
+        <div class="test-header">
+            <div>
+                <strong>IE Irodov</strong>
+                <span class="text-light"> — Q ${currentQuestion + 1} of ${testQuestions.length}</span>
+                <span class="text-light" style="margin-left: 12px; font-size: 0.8rem;">
+                    ✅ ${answeredCount} answered | 🟡 ${reviewCount} review
+                </span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="timer" id="timer">${formatTime(timeLeft)}</div>
+                <button class="btn btn-success btn-sm" onclick="showSubmitModal()">Submit Test</button>
+            </div>
+        </div>
+
+        <div class="nav-legend">
+            <span><span class="lb"></span> Not Visited</span>
+            <span><span class="lb lb-ans"></span> Answered</span>
+            <span><span class="lb lb-rev"></span> Review</span>
+            <span><span class="lb lb-cur"></span> Current</span>
+        </div>
+
+        <div class="question-nav">
+            ${testQuestions.map((tq, i) => {
+                const a = answers[tq.id];
+                const hasAns = a !== undefined && a !== null && a.toString().trim() !== '';
+                const inReview = markedForReview[tq.id];
+                let cls = '';
+                if (i === currentQuestion) cls += ' active';
+                if (hasAns) cls += ' answered';
+                if (inReview) cls += ' review';
+                return `<button class="${cls.trim()}" onclick="goTo(${i})">${i + 1}</button>`;
+            }).join('')}
+        </div>
+
+        <div class="card">
+            <div class="flex-between mb-2" style="flex-wrap:wrap; gap:8px;">
+                <div>
+                    <span class="badge badge-${q.badge}">${q.chapter}</span>
+                    ${isReviewed ? '<span class="badge" style="margin-left:6px; background:#fef3c7; color:#92400e;">🔖 Review</span>' : ''}
+                </div>
+                <span class="text-light" style="font-size: 0.85rem;">Irodov Q${q.id}</span>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-bottom: 8px;">Question ${currentQuestion + 1}</h3>
+            <img src="${q.questionImg}" alt="Irodov Q${q.id}" class="question-image"
+                 onerror="this.style.border='2px dashed var(--danger)'; this.alt='Image not found: Q${q.id}.png';">
+
+            <div class="answer-input-group">
+                <label>Your Answer:</label>
+                <input type="text" class="answer-input ${currentVal ? 'has-value' : ''}"
+                       id="answer-input" value="${currentVal}"
+                       placeholder="Type your numerical answer..."
+                       oninput="saveAnswer(${q.id}, this.value)">
+            </div>
+        </div>
+
+        <div class="flex-between mt-2" style="flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; gap:10px;">
+                ${currentQuestion > 0 ? `<button class="btn btn-outline" onclick="goTo(${currentQuestion - 1})">← Previous</button>` : ''}
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-outline" onclick="clearAnswer(${q.id})">Clear</button>
+                <button class="btn ${isReviewed ? 'btn-warning' : 'btn-outline'}" onclick="toggleReview(${q.id})"
+                        style="${!isReviewed ? 'border-color: var(--warning); color: var(--warning);' : ''}">
+                    ${isReviewed ? '🔖 Unmark Review' : '🔖 Mark for Review'}
+                </button>
+                ${currentQuestion < testQuestions.length - 1
+                    ? `<button class="btn btn-primary" onclick="goTo(${currentQuestion + 1})">Next →</button>`
+                    : `<button class="btn btn-success" onclick="showSubmitModal()">Submit Test</button>`
+                }
+            </div>
+        </div>
+
+        <div id="submit-modal-container"></div>
+    `;
+
+    // Focus the input
+    setTimeout(() => {
+        const inp = document.getElementById('answer-input');
+        if (inp) inp.focus();
+    }, 100);
+}
+
+function saveAnswer(qId, value) {
+    if (value.trim() === '') {
+        delete answers[qId];
+    } else {
+        answers[qId] = value;
+    }
+    // Update nav buttons without full re-render
+    const navBtns = document.querySelectorAll('.question-nav button');
+    testQuestions.forEach((tq, i) => {
+        const a = answers[tq.id];
+        const hasAns = a !== undefined && a !== null && a.toString().trim() !== '';
+        if (navBtns[i]) navBtns[i].classList.toggle('answered', hasAns);
+    });
+    // Update input style
+    const inp = document.getElementById('answer-input');
+    if (inp) inp.classList.toggle('has-value', value.trim() !== '');
+}
+
+function clearAnswer(qId) {
+    delete answers[qId];
+    renderTest();
+}
+
+function goTo(index) {
+    currentQuestion = index;
+    renderTest();
+}
+
+function toggleReview(qId) {
+    markedForReview[qId] = !markedForReview[qId];
+    renderTest();
+}
+
+function formatTime(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════
+// SUBMIT MODAL
+// ═══════════════════════════════════════
+function showSubmitModal() {
+    const total = testQuestions.length;
+    let answeredCount = 0, unansweredCount = 0, reviewCount = 0;
+    testQuestions.forEach(q => {
+        const a = answers[q.id];
+        const hasAns = a !== undefined && a !== null && a.toString().trim() !== '';
+        if (hasAns) answeredCount++;
+        else unansweredCount++;
+        if (markedForReview[q.id]) reviewCount++;
+    });
+
+    const html = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+            <div class="modal">
+                <h2>📋 Submission Summary</h2>
+                <div class="summary-stats">
+                    <div class="summary-stat" style="background:#eef2ff;">
+                        <div class="ss-value" style="color:var(--success)">${answeredCount}</div>
+                        <div class="ss-label">Answered</div>
+                    </div>
+                    <div class="summary-stat" style="background:#fef2f2;">
+                        <div class="ss-value" style="color:var(--danger)">${unansweredCount}</div>
+                        <div class="ss-label">Unanswered</div>
+                    </div>
+                    <div class="summary-stat" style="background:#fef3c7;">
+                        <div class="ss-value" style="color:#92400e">${reviewCount}</div>
+                        <div class="ss-label">Marked Review</div>
+                    </div>
+                </div>
+
+                <div style="max-height:250px; overflow-y:auto; border:1px solid var(--border); border-radius:10px;">
+                    ${testQuestions.map((q, i) => {
+                        const a = answers[q.id];
+                        const hasAns = a !== undefined && a !== null && a.toString().trim() !== '';
+                        const inReview = markedForReview[q.id];
+                        let statusCls = hasAns ? 'color:var(--success)' : 'color:var(--danger)';
+                        let statusText = hasAns ? '✅ Answered' : '⬜ Not Answered';
+                        if (inReview) { statusCls = 'color:#92400e'; statusText = hasAns ? '✅🔖 Answered + Review' : '🔖 Review'; }
+                        return `<div style="display:flex; align-items:center; justify-content:space-between; padding:6px 14px; border-bottom:1px solid var(--border); font-size:0.85rem;">
+                            <span><strong>Q${i+1}</strong> <span class="text-light">(Irodov ${q.id})</span></span>
+                            <span style="${statusCls}; font-weight:600; font-size:0.78rem;">${statusText}</span>
+                        </div>`;
+                    }).join('')}
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="closeModal()">← Go Back</button>
+                    <button class="btn btn-success" onclick="submitTest(false)">✅ Confirm Submit</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    let container = document.getElementById('submit-modal-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'submit-modal-container';
+        document.body.appendChild(container);
+    }
+    container.innerHTML = html;
+}
+
+function closeModal() {
+    const c = document.getElementById('submit-modal-container');
+    if (c) c.innerHTML = '';
+}
+
+// ═══════════════════════════════════════
+// SUBMIT TEST
+// ═══════════════════════════════════════
+function submitTest(forced) {
+    if (testSubmitted) return;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    testSubmitted = true;
+    closeModal();
+    renderResult();
+}
+
+// ═══════════════════════════════════════
+// RENDER: RESULT PAGE
+// ═══════════════════════════════════════
+function renderResult() {
+    const app = document.getElementById('app');
+
+    let attempted = 0, unattempted = 0;
+    testQuestions.forEach(q => {
+        const a = answers[q.id];
+        const hasAns = a !== undefined && a !== null && a.toString().trim() !== '';
+        if (hasAns) attempted++;
+        else unattempted++;
+    });
+
+    const reviewHtml = testQuestions.map((q, i) => {
+        const userAns = answers[q.id];
+        const hasAns = userAns !== undefined && userAns !== null && userAns.toString().trim() !== '';
+
+        let statusHtml, borderColor;
+        if (hasAns) {
+            statusHtml = '<span class="status-label status-attempted">✏️ Attempted</span>';
+            borderColor = 'var(--primary)';
+        } else {
+            statusHtml = '<span class="status-label status-unattempted">⚠ Unattempted</span>';
+            borderColor = '#f97316';
+        }
+
+        return `
+            <div class="card" style="border-left: 4px solid ${borderColor};">
+                <div class="flex-between" style="flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <strong>Q${i + 1}</strong>
+                        <span class="badge badge-${q.badge}" style="margin-left:6px;">${q.chapter}</span>
+                        <span class="text-light" style="margin-left:6px; font-size:0.82rem;">Irodov #${q.id}</span>
+                    </div>
+                    ${statusHtml}
+                </div>
+
+                <h4 style="margin: 12px 0 6px; font-size: 0.92rem;">📝 Question:</h4>
+                <img src="${q.questionImg}" alt="Irodov Q${q.id}" class="question-image"
+                     onerror="this.alt='Image not found';">
+
+                <div class="your-answer-box ${hasAns ? 'attempted' : 'unattempted'}">
+                    ${hasAns
+                        ? `📝 <strong>Your Answer:</strong> <span style="font-size:1.05rem;">${escapeHtml(userAns)}</span>`
+                        : `⚠ <strong>You did not attempt this question.</strong>`
+                    }
+                </div>
+
+                <h4 style="margin: 12px 0 6px; font-size: 0.92rem; color: var(--success);">✅ Answer / Solution:</h4>
+                <img src="${q.answerImg}" alt="Irodov A${q.id}" class="answer-image"
+                     onerror="this.alt='Answer image not found';">
+            </div>
+        `;
+    }).join('');
+
+    app.innerHTML = `
+        <div class="flex-between mb-3" style="flex-wrap:wrap; gap:12px;">
+            <h2>📊 Test Complete — IE Irodov</h2>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-outline btn-sm" onclick="retake()">🔄 Retake (New Questions)</button>
+                <a href="index.html" class="btn btn-primary btn-sm">← Back to Platform</a>
+            </div>
+        </div>
+
+        <div class="stat-grid mb-3">
+            <div class="stat-card">
+                <div class="stat-value">${testQuestions.length}</div>
+                <div class="stat-label">Total Questions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--success)">${attempted}</div>
+                <div class="stat-label">Attempted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #c2410c">${unattempted}</div>
+                <div class="stat-label">Unattempted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${Math.round((attempted / testQuestions.length) * 100)}%</div>
+                <div class="stat-label">Attempt Rate</div>
+            </div>
+        </div>
+
+        <!-- Chapter Breakdown -->
+        <div class="card mb-3">
+            <h2 style="margin-bottom:12px;">📚 Chapter-wise Breakdown</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                ${chapters.map(ch => {
+                    const chQs = testQuestions.filter(q => q.badge === ch.badge);
+                    const chAttempted = chQs.filter(q => {
+                        const a = answers[q.id];
+                        return a !== undefined && a !== null && a.toString().trim() !== '';
+                    }).length;
+                    const pct = chQs.length > 0 ? Math.round((chAttempted / chQs.length) * 100) : 0;
+                    return `
+                        <div style="background:var(--bg); padding:14px; border-radius:10px;">
+                            <strong style="font-size:0.9rem;">${ch.name}</strong>
+                            <div class="text-light" style="font-size:0.82rem; margin:4px 0;">${chAttempted}/${chQs.length} attempted</div>
+                            <div style="height:8px; background:var(--border); border-radius:4px; overflow:hidden;">
+                                <div style="height:100%; width:${pct}%; background:${pct >= 60 ? 'var(--success)' : 'var(--warning)'}; border-radius:4px; transition:width 0.5s;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 16px;">📝 Question-wise Review</h2>
+        <p class="text-light mb-3" style="font-size:0.88rem;">Compare your answer with the Irodov solution below each question.</p>
+        ${reviewHtml}
+
+        <div style="text-align:center; margin-top:24px;">
+            <button class="btn btn-primary" onclick="retake()">🔄 Retake Test (New 30 Questions)</button>
+        </div>
+    `;
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function retake() {
+    currentQuestion = 0;
+    answers = {};
+    markedForReview = {};
+    testSubmitted = false;
+    timeLeft = 90 * 60;
+    renderInstructions();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+renderInstructions();
+</script>
+</body>
+</html>
