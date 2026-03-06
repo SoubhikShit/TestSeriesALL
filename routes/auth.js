@@ -7,7 +7,7 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // POST /api/auth/register
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const { name, email, password, exam_preparing } = req.body;
 
@@ -15,15 +15,14 @@ router.post('/register', (req, res) => {
             return res.status(400).json({ error: 'Name, email and password are required' });
         }
 
-        // Check if user already exists
-        const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+        const existing = await db.prepare('SELECT id FROM users WHERE email = ?').get(email);
         if (existing) {
             return res.status(409).json({ error: 'Email already registered' });
         }
 
         const password_hash = bcrypt.hashSync(password, 10);
 
-        const result = db.prepare(
+        const result = await db.prepare(
             'INSERT INTO users (name, email, password_hash, exam_preparing) VALUES (?, ?, ?, ?)'
         ).run(name, email, password_hash, exam_preparing || null);
 
@@ -44,7 +43,7 @@ router.post('/register', (req, res) => {
 });
 
 // POST /api/auth/login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -52,7 +51,7 @@ router.post('/login', (req, res) => {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+        const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
         if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
@@ -84,9 +83,9 @@ router.post('/login', (req, res) => {
 });
 
 // GET /api/auth/me  - Get current user profile
-router.get('/me', auth, (req, res) => {
+router.get('/me', auth, async (req, res) => {
     try {
-        const user = db.prepare('SELECT id, name, email, exam_preparing, created_at FROM users WHERE id = ?').get(req.user.id);
+        const user = await db.prepare('SELECT id, name, email, exam_preparing, created_at FROM users WHERE id = ?').get(req.user.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
         res.json(user);
     } catch (err) {

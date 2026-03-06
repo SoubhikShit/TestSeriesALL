@@ -5,9 +5,9 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // GET /api/analysis/:attempt_id — Full test analysis
-router.get('/:attempt_id', auth, (req, res) => {
+router.get('/:attempt_id', auth, async (req, res) => {
     try {
-        const attempt = db.prepare(`
+        const attempt = await db.prepare(`
             SELECT ta.*, t.title as test_title, t.total_questions
             FROM test_attempts ta
             JOIN tests t ON ta.test_id = t.id
@@ -16,8 +16,7 @@ router.get('/:attempt_id', auth, (req, res) => {
 
         if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
 
-        // Get detailed answers with question info
-        const answers = db.prepare(`
+        const answers = await db.prepare(`
             SELECT ua.*, q.question_text, q.question_type, q.image_url, q.solution_image_url,
                    q.correct_answer_numeric, q.explanation, q.marks, q.negative_marks,
                    q.difficulty, s.name as subject_name,
@@ -32,10 +31,9 @@ router.get('/:attempt_id', auth, (req, res) => {
             WHERE ua.attempt_id = ?
         `).all(req.params.attempt_id);
 
-        // Enrich each answer with options (for MCQ questions)
         for (const a of answers) {
             if (a.question_type === 'mcq') {
-                a.options = db.prepare(
+                a.options = await db.prepare(
                     'SELECT id, option_text, is_correct FROM question_options WHERE question_id = ?'
                 ).all(a.question_id);
             } else {
@@ -43,8 +41,7 @@ router.get('/:attempt_id', auth, (req, res) => {
             }
         }
 
-        // Subject-wise breakdown
-        const subjectBreakdown = db.prepare(`
+        const subjectBreakdown = await db.prepare(`
             SELECT s.name as subject,
                    COUNT(*) as total,
                    SUM(CASE WHEN ua.is_correct = 1 THEN 1 ELSE 0 END) as correct,
@@ -54,11 +51,10 @@ router.get('/:attempt_id', auth, (req, res) => {
             JOIN questions q ON ua.question_id = q.id
             JOIN subjects s ON q.subject_id = s.id
             WHERE ua.attempt_id = ?
-            GROUP BY s.id
+            GROUP BY s.id, s.name
         `).all(req.params.attempt_id);
 
-        // Topic-wise breakdown
-        const topicBreakdown = db.prepare(`
+        const topicBreakdown = await db.prepare(`
             SELECT COALESCE(tp.id, 0) as topic_id, COALESCE(c.name, tp.name, 'Unknown') as topic, s.name as subject,
                    COUNT(*) as total,
                    SUM(CASE WHEN ua.is_correct = 1 THEN 1 ELSE 0 END) as correct,
@@ -69,8 +65,8 @@ router.get('/:attempt_id', auth, (req, res) => {
             LEFT JOIN chapters c ON q.chapter_id = c.id
             JOIN subjects s ON q.subject_id = s.id
             WHERE ua.attempt_id = ?
-            GROUP BY COALESCE(tp.id, q.chapter_id)
-            ORDER BY correct * 1.0 / total ASC
+            GROUP BY COALESCE(tp.id, q.chapter_id), COALESCE(c.name, tp.name, 'Unknown'), s.name
+            ORDER BY SUM(CASE WHEN ua.is_correct = 1 THEN 1 ELSE 0 END) * 1.0 / COUNT(*) ASC
         `).all(req.params.attempt_id);
 
         res.json({
@@ -85,9 +81,9 @@ router.get('/:attempt_id', auth, (req, res) => {
 });
 
 // GET /api/analysis/weak-topics/:user_id — Detect weak topics
-router.get('/weak-topics/me', auth, (req, res) => {
+router.get('/weak-topics/me', auth, async (req, res) => {
     try {
-        const weakTopics = db.prepare(`
+        const weakTopics = await db.prepare(`
             SELECT tp.*, t.name as topic_name, s.name as subject_name
             FROM topic_performance tp
             JOIN topics t ON tp.topic_id = t.id
@@ -106,9 +102,9 @@ router.get('/weak-topics/me', auth, (req, res) => {
 });
 
 // GET /api/analysis/topic-performance/me — All topic performances
-router.get('/topic-performance/me', auth, (req, res) => {
+router.get('/topic-performance/me', auth, async (req, res) => {
     try {
-        const performance = db.prepare(`
+        const performance = await db.prepare(`
             SELECT tp.*, t.name as topic_name, s.name as subject_name
             FROM topic_performance tp
             JOIN topics t ON tp.topic_id = t.id
@@ -124,9 +120,9 @@ router.get('/topic-performance/me', auth, (req, res) => {
 });
 
 // GET /api/analysis/history/me — Test history for logged-in user
-router.get('/history/me', auth, (req, res) => {
+router.get('/history/me', auth, async (req, res) => {
     try {
-        const history = db.prepare(`
+        const history = await db.prepare(`
             SELECT ta.*, t.title as test_title, e.name as exam_name
             FROM test_attempts ta
             JOIN tests t ON ta.test_id = t.id

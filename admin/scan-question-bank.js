@@ -207,8 +207,7 @@ async function importToDatabase(bank, dryRun = false) {
 
     let stats = { exams: 0, subjects: 0, chapters: 0, questions: 0, options: 0, skipped: 0 };
 
-    const importAll = db.transaction(() => {
-        // Exam code → id cache
+    const importAll = db.transaction(async (txDb) => {
         const examCache = {};
         const subjectCache = {};
         const chapterCache = {};
@@ -217,12 +216,11 @@ async function importToDatabase(bank, dryRun = false) {
             // Ensure exam exists
             const examKey = entry.examCode;
             if (!examCache[examKey]) {
-                let exam = db.prepare('SELECT id FROM exams WHERE code = ?').get(examKey);
+                let exam = await txDb.prepare('SELECT id FROM exams WHERE code = ?').get(examKey);
                 if (!exam) {
-                    // Create exam with sensible defaults
                     const examName = examKey.toUpperCase().replace(/-/g, ' ');
-                    const id = db.prepare('INSERT INTO exams (name, code, duration, total_marks, negative_marking) VALUES (?, ?, ?, ?, ?)')
-                        .run(examName, examKey, 180, 300, 1).lastInsertRowid;
+                    const id = (await txDb.prepare('INSERT INTO exams (name, code, duration, total_marks, negative_marking) VALUES (?, ?, ?, ?, ?)')
+                        .run(examName, examKey, 180, 300, 1)).lastInsertRowid;
                     examCache[examKey] = id;
                     stats.exams++;
                     console.log(`  📝 Created exam: ${examName} (code: ${examKey})`);
@@ -236,10 +234,10 @@ async function importToDatabase(bank, dryRun = false) {
             const subKey = `${examKey}:${entry.subjectName}`;
             if (!subjectCache[subKey]) {
                 const subCode = entry.subjectName.toLowerCase().replace(/\s+/g, '-');
-                let sub = db.prepare('SELECT id FROM subjects WHERE exam_id = ? AND name = ?').get(examId, entry.subjectName);
+                let sub = await txDb.prepare('SELECT id FROM subjects WHERE exam_id = ? AND name = ?').get(examId, entry.subjectName);
                 if (!sub) {
-                    const id = db.prepare('INSERT INTO subjects (exam_id, name, code) VALUES (?, ?, ?)')
-                        .run(examId, entry.subjectName, subCode).lastInsertRowid;
+                    const id = (await txDb.prepare('INSERT INTO subjects (exam_id, name, code) VALUES (?, ?, ?)')
+                        .run(examId, entry.subjectName, subCode)).lastInsertRowid;
                     subjectCache[subKey] = id;
                     stats.subjects++;
                     console.log(`  📚 Created subject: ${entry.subjectName}`);
@@ -252,15 +250,14 @@ async function importToDatabase(bank, dryRun = false) {
             // Ensure chapter exists
             const chapKey = `${subKey}:${entry.chapterNum}`;
             if (!chapterCache[chapKey]) {
-                let chap = db.prepare('SELECT id FROM chapters WHERE subject_id = ? AND chapter_number = ?').get(subjectId, entry.chapterNum);
+                let chap = await txDb.prepare('SELECT id FROM chapters WHERE subject_id = ? AND chapter_number = ?').get(subjectId, entry.chapterNum);
                 if (!chap) {
-                    const id = db.prepare('INSERT INTO chapters (subject_id, chapter_number, name, description, folder_name) VALUES (?, ?, ?, ?, ?)')
-                        .run(subjectId, entry.chapterNum, entry.chapterName, entry.chapterDescription, entry.chapterFolder).lastInsertRowid;
+                    const id = (await txDb.prepare('INSERT INTO chapters (subject_id, chapter_number, name, description, folder_name) VALUES (?, ?, ?, ?, ?)')
+                        .run(subjectId, entry.chapterNum, entry.chapterName, entry.chapterDescription, entry.chapterFolder)).lastInsertRowid;
                     chapterCache[chapKey] = id;
                     stats.chapters++;
 
-                    // Also create legacy topic entry
-                    db.prepare('INSERT INTO topics (subject_id, chapter_id, name, description) VALUES (?, ?, ?, ?)')
+                    await txDb.prepare('INSERT INTO topics (subject_id, chapter_id, name, description) VALUES (?, ?, ?, ?)')
                         .run(subjectId, id, entry.chapterName, entry.chapterDescription);
                 } else {
                     chapterCache[chapKey] = chap.id;
@@ -269,14 +266,13 @@ async function importToDatabase(bank, dryRun = false) {
             const chapterId = chapterCache[chapKey];
 
             // Get linked topic_id
-            const topic = db.prepare('SELECT id FROM topics WHERE chapter_id = ?').get(chapterId);
+            const topic = await txDb.prepare('SELECT id FROM topics WHERE chapter_id = ?').get(chapterId);
             const topicId = topic ? topic.id : null;
 
             // Import questions
             for (const q of entry.questions) {
-                // Check if already imported (by source_folder + source_file)
                 if (q.file) {
-                    const existing = db.prepare('SELECT id FROM questions WHERE source_folder = ? AND source_file = ?')
+                    const existing = await txDb.prepare('SELECT id FROM questions WHERE source_folder = ? AND source_file = ?')
                         .get(q.sourceFolder, q.file);
                     if (existing) {
                         stats.skipped++;
@@ -284,7 +280,7 @@ async function importToDatabase(bank, dryRun = false) {
                     }
                 }
 
-                const qId = db.prepare(`
+                const qId = (await txDb.prepare(`
                     INSERT INTO questions (exam_id, subject_id, chapter_id, topic_id,
                         question_type, difficulty, question_text, image_url,
                         correct_answer_numeric, answer_tolerance, solution_image_url,
@@ -296,7 +292,7 @@ async function importToDatabase(bank, dryRun = false) {
                     q.answer, q.tolerance, q.solutionPath,
                     q.explanation, q.marks, q.negative_marks,
                     q.sourceFolder, q.file, q.tags
-                ).lastInsertRowid;
+                )).lastInsertRowid;
 
                 stats.questions++;
 
@@ -305,7 +301,7 @@ async function importToDatabase(bank, dryRun = false) {
                     const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
                     for (let i = 0; i < q.options.length; i++) {
                         const opt = q.options[i];
-                        db.prepare('INSERT INTO question_options (question_id, option_label, option_text, option_image_url, is_correct) VALUES (?, ?, ?, ?, ?)')
+                        await txDb.prepare('INSERT INTO question_options (question_id, option_label, option_text, option_image_url, is_correct) VALUES (?, ?, ?, ?, ?)')
                             .run(qId, opt.label || labels[i], opt.text || null, opt.image || null, opt.correct ? 1 : 0);
                         stats.options++;
                     }
@@ -315,7 +311,6 @@ async function importToDatabase(bank, dryRun = false) {
     });
 
     if (dryRun) {
-        // Just show what would happen
         console.log('\n🔍 DRY RUN — no changes made:\n');
         for (const entry of bank) {
             console.log(`  ${entry.examCode} / ${entry.subjectName} / Ch${entry.chapterNum}: ${entry.chapterName}`);
@@ -324,7 +319,7 @@ async function importToDatabase(bank, dryRun = false) {
         const total = bank.reduce((s, e) => s + e.questions.length, 0);
         console.log(`\n  Total: ${bank.length} chapters, ${total} questions`);
     } else {
-        importAll();
+        await importAll();
         console.log('\n✅ Import complete:');
         console.log(`  📝 Exams created: ${stats.exams}`);
         console.log(`  📚 Subjects created: ${stats.subjects}`);

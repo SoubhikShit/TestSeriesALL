@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // GET /api/tests?exam_id=1 — List tests, optionally filtered by exam
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
         let query = 'SELECT t.*, e.name as exam_name FROM tests t JOIN exams e ON t.exam_id = e.id';
         const params = [];
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
         }
 
         query += ' ORDER BY t.created_at DESC';
-        const tests = db.prepare(query).all(...params);
+        const tests = await db.prepare(query).all(...params);
         res.json(tests);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -24,9 +24,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/tests/:id — Get test details
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const test = db.prepare(`
+        const test = await db.prepare(`
             SELECT t.*, e.name as exam_name
             FROM tests t
             JOIN exams e ON t.exam_id = e.id
@@ -42,9 +42,9 @@ router.get('/:id', (req, res) => {
 });
 
 // GET /api/tests/:id/questions — Get test questions (for taking test)
-router.get('/:id/questions', auth, (req, res) => {
+router.get('/:id/questions', auth, async (req, res) => {
     try {
-        const questions = db.prepare(`
+        const questions = await db.prepare(`
             SELECT q.id, q.question_type, q.question_text, q.image_url,
                    q.difficulty, q.marks, q.negative_marks,
                    tq.question_order, s.name as subject_name, tp.name as topic_name
@@ -56,10 +56,9 @@ router.get('/:id/questions', auth, (req, res) => {
             ORDER BY tq.question_order
         `).all(req.params.id);
 
-        // Fetch options for MCQ questions (without revealing correct answer)
         for (const q of questions) {
             if (q.question_type === 'mcq') {
-                q.options = db.prepare(
+                q.options = await db.prepare(
                     'SELECT id, option_text FROM question_options WHERE question_id = ?'
                 ).all(q.id);
             } else {

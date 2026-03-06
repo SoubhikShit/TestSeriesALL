@@ -1,10 +1,5 @@
 /**
  * Question Bank & Test Generator Routes
- * 
- * GET  /api/question-bank/stats              — Bank statistics
- * GET  /api/question-bank/browse             — Browse questions with filters
- * GET  /api/question-bank/chapters           — List all chapters by subject
- * POST /api/question-bank/generate-test      — Auto-generate a test from bank
  */
 
 const express = require('express');
@@ -13,39 +8,32 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-// ═══════════════════════════════════════
 // GET /api/question-bank/stats
-// Overview of question bank per exam/subject/chapter
-// ═══════════════════════════════════════
-router.get('/stats', auth, (req, res) => {
+router.get('/stats', auth, async (req, res) => {
     try {
-        // Overall counts
-        const total = db.prepare('SELECT COUNT(*) as count FROM questions').get();
-        const byType = db.prepare('SELECT question_type, COUNT(*) as count FROM questions GROUP BY question_type').all();
-        const byDifficulty = db.prepare('SELECT difficulty, COUNT(*) as count FROM questions GROUP BY difficulty').all();
+        const total = await db.prepare('SELECT COUNT(*) as count FROM questions').get();
+        const byType = await db.prepare('SELECT question_type, COUNT(*) as count FROM questions GROUP BY question_type').all();
+        const byDifficulty = await db.prepare('SELECT difficulty, COUNT(*) as count FROM questions GROUP BY difficulty').all();
 
-        // Per exam
-        const exams = db.prepare(`
+        const exams = await db.prepare(`
             SELECT e.id, e.name, e.code, COUNT(q.id) as question_count
             FROM exams e
             LEFT JOIN questions q ON q.exam_id = e.id
-            GROUP BY e.id
+            GROUP BY e.id, e.name, e.code
             ORDER BY e.name
         `).all();
 
-        // Per subject (with chapter breakdown)
-        const subjects = db.prepare(`
+        const subjects = await db.prepare(`
             SELECT s.id, s.name, s.exam_id, e.name as exam_name,
                    COUNT(q.id) as question_count
             FROM subjects s
             JOIN exams e ON s.exam_id = e.id
             LEFT JOIN questions q ON q.subject_id = s.id
-            GROUP BY s.id
+            GROUP BY s.id, s.name, s.exam_id, e.name
             ORDER BY e.name, s.name
         `).all();
 
-        // Per chapter
-        const chapters = db.prepare(`
+        const chapters = await db.prepare(`
             SELECT c.id, c.chapter_number, c.name, c.subject_id,
                    s.name as subject_name, e.name as exam_name,
                    COUNT(q.id) as question_count,
@@ -58,28 +46,18 @@ router.get('/stats', auth, (req, res) => {
             JOIN subjects s ON c.subject_id = s.id
             JOIN exams e ON s.exam_id = e.id
             LEFT JOIN questions q ON q.chapter_id = c.id
-            GROUP BY c.id
+            GROUP BY c.id, c.chapter_number, c.name, c.subject_id, s.name, e.name
             ORDER BY e.name, s.name, c.chapter_number
         `).all();
 
-        res.json({
-            total: total.count,
-            byType,
-            byDifficulty,
-            exams,
-            subjects,
-            chapters
-        });
+        res.json({ total: total.count, byType, byDifficulty, exams, subjects, chapters });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// ═══════════════════════════════════════
-// GET /api/question-bank/chapters?exam_id=1&subject_id=2
-// List chapters for a given subject/exam
-// ═══════════════════════════════════════
-router.get('/chapters', auth, (req, res) => {
+// GET /api/question-bank/chapters
+router.get('/chapters', auth, async (req, res) => {
     try {
         let query = `
             SELECT c.id, c.chapter_number, c.name, c.description, c.subject_id,
@@ -104,20 +82,16 @@ router.get('/chapters', auth, (req, res) => {
             query += ' WHERE ' + conditions.join(' AND ');
         }
 
-        query += ' GROUP BY c.id ORDER BY s.name, c.chapter_number';
-        const chapters = db.prepare(query).all(...params);
+        query += ' GROUP BY c.id, c.chapter_number, c.name, c.description, c.subject_id, s.name ORDER BY s.name, c.chapter_number';
+        const chapters = await db.prepare(query).all(...params);
         res.json(chapters);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// ═══════════════════════════════════════
 // GET /api/question-bank/browse
-// Browse/filter questions from the bank
-// Query params: exam_id, subject_id, chapter_id, difficulty, type, page, limit
-// ═══════════════════════════════════════
-router.get('/browse', auth, (req, res) => {
+router.get('/browse', auth, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = Math.min(parseInt(req.query.limit) || 20, 100);
@@ -141,12 +115,10 @@ router.get('/browse', auth, (req, res) => {
 
         const whereClause = where.length > 0 ? 'WHERE ' + where.join(' AND ') : '';
 
-        // Count total
-        const countQ = db.prepare(`SELECT COUNT(*) as total FROM questions q ${whereClause}`).get(...params);
+        const countQ = await db.prepare(`SELECT COUNT(*) as total FROM questions q ${whereClause}`).get(...params);
 
-        // Fetch page
-        const questions = db.prepare(`
-            SELECT q.*, s.name as subject_name, 
+        const questions = await db.prepare(`
+            SELECT q.*, s.name as subject_name,
                    COALESCE(c.name, t.name) as chapter_name,
                    c.chapter_number, e.name as exam_name
             FROM questions q
@@ -159,10 +131,9 @@ router.get('/browse', auth, (req, res) => {
             LIMIT ? OFFSET ?
         `).all(...params, limit, offset);
 
-        // Add options for MCQ questions
         for (const q of questions) {
             if (q.question_type === 'mcq') {
-                q.options = db.prepare('SELECT id, option_label, option_text, option_image_url, is_correct FROM question_options WHERE question_id = ?').all(q.id);
+                q.options = await db.prepare('SELECT id, option_label, option_text, option_image_url, is_correct FROM question_options WHERE question_id = ?').all(q.id);
             }
         }
 
@@ -180,32 +151,8 @@ router.get('/browse', auth, (req, res) => {
     }
 });
 
-// ═══════════════════════════════════════
 // POST /api/question-bank/generate-test
-// Auto-generate a test from the question bank
-// 
-// Body: {
-//   "title": "Physics Ch 1-5 Mock",
-//   "exam_id": 1,
-//   "duration": 90,                       (minutes)
-//   "sections": [                          (define question sources)
-//     {
-//       "subject_id": 1,
-//       "chapter_ids": [1, 2, 3, 4, 5],   (optional — all if omitted)
-//       "count": 15,
-//       "difficulty_mix": { "easy": 3, "medium": 8, "hard": 4 },  (optional)
-//       "type": "mcq"                      (optional — both if omitted)
-//     },
-//     {
-//       "subject_id": 2,
-//       "count": 10,
-//       "type": "nat"
-//     }
-//   ],
-//   "shuffle": true
-// }
-// ═══════════════════════════════════════
-router.post('/generate-test', auth, (req, res) => {
+router.post('/generate-test', auth, async (req, res) => {
     try {
         const { title, exam_id, duration, sections, shuffle } = req.body;
 
@@ -223,7 +170,6 @@ router.post('/generate-test', auth, (req, res) => {
             }
 
             if (difficulty_mix) {
-                // Fetch by difficulty breakdown
                 for (const [diff, diffCount] of Object.entries(difficulty_mix)) {
                     let where = ['q.subject_id = ?', 'q.difficulty = ?'];
                     let params = [subject_id, diff];
@@ -236,14 +182,12 @@ router.post('/generate-test', auth, (req, res) => {
                         where.push('q.question_type = ?');
                         params.push(type);
                     }
-
-                    // Exclude already selected
                     if (selectedQuestions.length > 0) {
                         where.push(`q.id NOT IN (${selectedQuestions.map(() => '?').join(',')})`);
                         params.push(...selectedQuestions);
                     }
 
-                    const qs = db.prepare(`
+                    const qs = await db.prepare(`
                         SELECT q.id FROM questions q
                         WHERE ${where.join(' AND ')}
                         ORDER BY RANDOM() LIMIT ?
@@ -252,7 +196,6 @@ router.post('/generate-test', auth, (req, res) => {
                     qs.forEach(q => selectedQuestions.push(q.id));
                 }
             } else {
-                // Simple random selection
                 let where = ['q.subject_id = ?'];
                 let params = [subject_id];
 
@@ -269,7 +212,7 @@ router.post('/generate-test', auth, (req, res) => {
                     params.push(...selectedQuestions);
                 }
 
-                const qs = db.prepare(`
+                const qs = await db.prepare(`
                     SELECT q.id FROM questions q
                     WHERE ${where.join(' AND ')}
                     ORDER BY RANDOM() LIMIT ?
@@ -283,31 +226,30 @@ router.post('/generate-test', auth, (req, res) => {
             return res.status(400).json({ error: 'No questions matched the criteria. Check your filters.' });
         }
 
-        // Optionally shuffle
         const finalOrder = shuffle !== false
             ? selectedQuestions.sort(() => Math.random() - 0.5)
             : selectedQuestions;
 
-        // Determine test type
         const subjectCount = new Set(sections.map(s => s.subject_id)).size;
         const hasChapterFilter = sections.some(s => s.chapter_ids && s.chapter_ids.length > 0);
         let testType = 'full_mock';
         if (hasChapterFilter) testType = 'chapter_test';
         else if (subjectCount === 1) testType = 'subject_test';
 
-        // Create test in transaction
-        const createTest = db.transaction(() => {
-            const testId = db.prepare(
+        const createTest = db.transaction(async (txDb) => {
+            const testId = (await txDb.prepare(
                 'INSERT INTO tests (exam_id, title, duration, total_questions, test_type, generation_config) VALUES (?, ?, ?, ?, ?, ?)'
-            ).run(exam_id, title, duration, finalOrder.length, testType, JSON.stringify(req.body)).lastInsertRowid;
+            ).run(exam_id, title, duration, finalOrder.length, testType, JSON.stringify(req.body))).lastInsertRowid;
 
-            const insertTQ = db.prepare('INSERT INTO test_questions (test_id, question_id, question_order) VALUES (?, ?, ?)');
-            finalOrder.forEach((qId, i) => insertTQ.run(testId, qId, i + 1));
+            const insertTQ = txDb.prepare('INSERT INTO test_questions (test_id, question_id, question_order) VALUES (?, ?, ?)');
+            for (let i = 0; i < finalOrder.length; i++) {
+                await insertTQ.run(testId, finalOrder[i], i + 1);
+            }
 
             return testId;
         });
 
-        const testId = createTest();
+        const testId = await createTest();
 
         res.json({
             test_id: testId,
