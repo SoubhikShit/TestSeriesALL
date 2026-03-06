@@ -7,7 +7,11 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
-const DB_PATH = path.resolve(__dirname, '..', process.env.DB_PATH || './db/testseries.db');
+// On Vercel, use /tmp (only writable dir); locally use the project folder
+const isVercel = process.env.VERCEL === '1';
+const DB_PATH = isVercel
+    ? path.join('/tmp', 'testseries.db')
+    : path.resolve(__dirname, '..', process.env.DB_PATH || './db/testseries.db');
 
 // Ensure db directory exists
 const dbDir = path.dirname(DB_PATH);

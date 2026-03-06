@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "irodov_qa_separated/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "question-bank/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/irodov_qa_separated/(.*)", "dest": "/irodov_qa_separated/$1" },
+    { "src": "/question-bank/(.*)", "dest": "/question-bank/$1" },
+    { "src": "/api/(.*)", "dest": "/api/index.js" },
+    { "src": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|svg|ico|json))", "dest": "/public/$1" },
+    { "src": "/(.*)", "dest": "/api/index.js" }
+  ],
+  "env": {
+    "VERCEL": "1"
+  }
+}
